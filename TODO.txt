@@ -1,0 +1,1 @@
+1. Add part from Prob_calc.ipynb to Prob_calc.py
