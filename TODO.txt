@@ -1,1 +1,3 @@
-1. Add part from Prob_calc.ipynb to Prob_calc.py
+1. replace probabilities with probabilities from 191960.pdf
+    check equations 39-41, maybe also 33 and 36-37
+2. Difference plots for neutrino anti neutrino
