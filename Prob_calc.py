@@ -15,9 +15,9 @@ c_13=Symbol("c_13",real=True)
 
 d_cp=Symbol("d_cp",real=True)
 
-D_m_12=Symbol("D_m_12",real=True)
-D_m_13=Symbol("D_m_13",real=True)
-D_m_23=Symbol("D_m_23",real=True)
+D_m_21=Symbol("D_m_12",real=True)
+D_m_31=Symbol("D_m_13",real=True)
+D_m_32=Symbol("D_m_23",real=True)
 
 L=Symbol("L",real=True,positive=True)
 E_nu=Symbol("E_nu",real=True)
@@ -71,9 +71,25 @@ def Prob_a_to_b(a,b):
     s=PMNS[index_b,0]*conjugate(PMNS[index_a,0])*PMNS[index_a,2]*conjugate(PMNS[index_b,2])
     t=PMNS[index_b,1]*conjugate(PMNS[index_a,1])*PMNS[index_a,2]*conjugate(PMNS[index_b,2])
 
-    first=re(f)*sin((D_m_12*L)/(4*E_nu))**2
-    second=re(s)*sin((D_m_13*L)/(4*E_nu))**2
-    third=re(t)*sin((D_m_23*L)/(4*E_nu))**2
+    first=re(f)*sin((D_m_21*L)/(4*E_nu))**2
+    second=re(s)*sin((D_m_31*L)/(4*E_nu))**2
+    third=re(t)*sin((D_m_32*L)/(4*E_nu))**2
+
+    if a==b:
+        return 1-4*(first+second+third)
+    else:
+        return -4*(first+second+third)
+
+def Prob_anti_a_to_anti_b(a,b):
+    index_a,index_b=flavor_to_index(a,b)
+
+    f=conjugate(PMNS[index_b,0])*PMNS[index_a,0]*conjugate(PMNS[index_a,1])*PMNS[index_b,1]
+    s=conjugate(PMNS[index_b,0])*PMNS[index_a,0]*conjugate(PMNS[index_a,2])*PMNS[index_b,2]
+    t=conjugate(PMNS[index_b,1])*PMNS[index_a,1]*conjugate(PMNS[index_a,2])*PMNS[index_b,2]
+
+    first=re(f)*sin((D_m_21*L)/(4*E_nu))**2
+    second=re(s)*sin((D_m_31*L)/(4*E_nu))**2
+    third=re(t)*sin((D_m_32*L)/(4*E_nu))**2
 
     if a==b:
         return 1-4*(first+second+third)
@@ -110,7 +126,7 @@ tau="tau"
 flavors=[e,mu]
 
 #These variables are used fot the plots
-n=20
+n=100
 dist=np.linspace(0,13000,n)
 eneg_range=np.logspace(-1,2,n)
 
@@ -126,11 +142,13 @@ for a in tqdm(flavors):
             #Replacing sin and cos by their values known from experiments
             Total_prob=np.zeros([n,n])
             Equation=Prob_a_to_b(a,b).subs([(s_12,s_ij(1,2)),(c_12,c_ij(1,2)),(c_13,c_ij(1,3)),(c_23,c_ij(2,3)),(s_13,s_ij(1,3)),(s_23,s_ij(2,3)),(d_cp,delta_cp)])
+            Equation_anti=Prob_anti_a_to_anti_b(a,b).subs([(s_12,s_ij(1,2)),(c_12,c_ij(1,2)),(c_13,c_ij(1,3)),(c_23,c_ij(2,3)),(s_13,s_ij(1,3)),(s_23,s_ij(2,3)),(d_cp,delta_cp)])
             print("Calculation for "+a+" to "+b+" started!")
             for i,l in enumerate(dist):
-                eq_with_L=Equation.subs([(D_m_12,7.5*10**(-5)),(D_m_23,2.427*10**(-3)),(D_m_13,2.427*10**(-3)+7.5*10**(-5)),(L,l)])
+                eq_with_L=Equation.subs([(D_m_21,7.5*10**(-5)),(D_m_32,2.427*10**(-3)),(D_m_31,2.427*10**(-3)+7.5*10**(-5)),(L,l)])
+                eq_with_L_anti=Equation_anti.subs([(D_m_21,7.5*10**(-5)),(D_m_32,2.427*10**(-3)),(D_m_31,2.427*10**(-3)+7.5*10**(-5)),(L,l)])
                 for j,en in enumerate(eneg_range):
-                    Total_prob[i][j]=eq_with_L.subs([(E_nu,en)])
+                    Total_prob[i][j]=eq_with_L.subs([(E_nu,en)])-eq_with_L_anti.subs([(E_nu,en)])
                 del eq_with_L
             
             if a==e and b==mu:
@@ -177,6 +195,7 @@ for events,name in zip(list_of_all,name_help):
     plt.xlim(right=int(n*0.89))
 
     plt.title(events[0],fontsize=14) 
+    plt.show()
     #plt.savefig('heatmaps/Hm_Prob_%s_to.pdf' % (name))
     
     
