@@ -31,7 +31,7 @@ def PMNS_param_matrix():
 
     return m
 
-PMNS=PMNS_param_matrix()
+U=PMNS_param_matrix()
 
 def flavor_to_index(a,b):
     if a == "e":
@@ -67,9 +67,10 @@ def Prob_a_to_b(a,b):
     """
     index_a,index_b=flavor_to_index(a,b)
 
-    f=PMNS[index_b,0]*conjugate(PMNS[index_a,0])*PMNS[index_a,1]*conjugate(PMNS[index_b,1])
-    s=PMNS[index_b,0]*conjugate(PMNS[index_a,0])*PMNS[index_a,2]*conjugate(PMNS[index_b,2])
-    t=PMNS[index_b,1]*conjugate(PMNS[index_a,1])*PMNS[index_a,2]*conjugate(PMNS[index_b,2])
+
+    f=U[index_b,0]*conjugate(U[index_a,0])*U[index_a,1]*conjugate(U[index_b,1])
+    s=U[index_b,0]*conjugate(U[index_a,0])*U[index_a,2]*conjugate(U[index_b,2])
+    t=U[index_b,1]*conjugate(U[index_a,1])*U[index_a,2]*conjugate(U[index_b,2])
 
     first=re(f)*sin((D_m_21*L)/(4*E_nu))**2
     second=re(s)*sin((D_m_31*L)/(4*E_nu))**2
@@ -83,9 +84,9 @@ def Prob_a_to_b(a,b):
 def Prob_anti_a_to_anti_b(a,b):
     index_a,index_b=flavor_to_index(a,b)
 
-    f=conjugate(PMNS[index_b,0])*PMNS[index_a,0]*conjugate(PMNS[index_a,1])*PMNS[index_b,1]
-    s=conjugate(PMNS[index_b,0])*PMNS[index_a,0]*conjugate(PMNS[index_a,2])*PMNS[index_b,2]
-    t=conjugate(PMNS[index_b,1])*PMNS[index_a,1]*conjugate(PMNS[index_a,2])*PMNS[index_b,2]
+    f=conjugate(U[index_b,0])*U[index_a,0]*conjugate(U[index_a,1])*U[index_b,1]
+    s=conjugate(U[index_b,0])*U[index_a,0]*conjugate(U[index_a,2])*U[index_b,2]
+    t=conjugate(U[index_b,1])*U[index_a,1]*conjugate(U[index_a,2])*U[index_b,2]
 
     first=re(f)*sin((D_m_21*L)/(4*E_nu))**2
     second=re(s)*sin((D_m_31*L)/(4*E_nu))**2
@@ -95,6 +96,45 @@ def Prob_anti_a_to_anti_b(a,b):
         return 1-4*(first+second+third)
     else:
         return -4*(first+second+third)
+
+def D_mass_param(i,j):
+    if i==j:
+        return ValueError("Probably 0 but not sure yet...")
+    elif i==1:
+        if j==2:
+            return -D_m_21
+        elif j==3:
+            return -D_m_31
+    elif i==2 :
+        if j==1:
+            return D_m_21
+        elif j==3:
+            return -D_m_32
+    elif i==3:
+        if j==1:
+            return D_m_31
+        elif j==2:            
+            return D_m_32
+
+def norm(z):
+    return sqrt(re(z)**2+im(z)**2)
+
+def Prob_a_to_b_alt(a,b):
+    index_a,index_b=flavor_to_index(a,b)
+
+    fst_rhs=0
+    U=PMNS_param_matrix()
+    for i in [0,1,2]:
+        fst_rhs+=(norm(U[index_b,i])**2)* norm(U[index_a,i])**2
+
+    scd_rhs=0
+    for i in [0,1,2]:
+        for j in [0,1,2]:
+            if i>j:
+                scd_rhs+=U[index_b,i]*conjugate(U[index_a,i])*conjugate(U[index_b,j])*U[index_a,j]*cos((D_mass_param(i+1,j+1))*L/(2*E_nu))
+
+    return fst_rhs+(2*re(scd_rhs))
+    
 
 
 """ 
@@ -116,7 +156,7 @@ def s_ij(i,j):
 def c_ij(i,j):
     return (1-(s_ij(i,j)**2))**(1/2)
 
-delta_cp=300
+delta_cp=np.pi/2
 
 #Defining the possible flavors as strings
 e="e"
@@ -126,7 +166,7 @@ tau="tau"
 flavors=[e,mu]
 
 #These variables are used fot the plots
-n=100
+n=10
 dist=np.linspace(0,13000,n)
 eneg_range=np.logspace(-1,2,n)
 
@@ -136,19 +176,17 @@ list_of_all=[]
 bool=True
 for a in tqdm(flavors):
     for b in flavors:
-       
-
         if bool or a==b:
             #Replacing sin and cos by their values known from experiments
             Total_prob=np.zeros([n,n])
-            Equation=Prob_a_to_b(a,b).subs([(s_12,s_ij(1,2)),(c_12,c_ij(1,2)),(c_13,c_ij(1,3)),(c_23,c_ij(2,3)),(s_13,s_ij(1,3)),(s_23,s_ij(2,3)),(d_cp,delta_cp)])
-            Equation_anti=Prob_anti_a_to_anti_b(a,b).subs([(s_12,s_ij(1,2)),(c_12,c_ij(1,2)),(c_13,c_ij(1,3)),(c_23,c_ij(2,3)),(s_13,s_ij(1,3)),(s_23,s_ij(2,3)),(d_cp,delta_cp)])
+            Equation=Prob_a_to_b_alt(a,b).subs([(s_12,s_ij(1,2)),(c_12,c_ij(1,2)),(c_13,c_ij(1,3)),(c_23,c_ij(2,3)),(s_13,s_ij(1,3)),(s_23,s_ij(2,3)),(d_cp,delta_cp)])
+            #Equation_anti=Prob_anti_a_to_anti_b(a,b).subs([(s_12,s_ij(1,2)),(c_12,c_ij(1,2)),(c_13,c_ij(1,3)),(c_23,c_ij(2,3)),(s_13,s_ij(1,3)),(s_23,s_ij(2,3)),(d_cp,delta_cp)])
             print("Calculation for "+a+" to "+b+" started!")
             for i,l in enumerate(dist):
                 eq_with_L=Equation.subs([(D_m_21,7.5*10**(-5)),(D_m_32,2.427*10**(-3)),(D_m_31,2.427*10**(-3)+7.5*10**(-5)),(L,l)])
-                eq_with_L_anti=Equation_anti.subs([(D_m_21,7.5*10**(-5)),(D_m_32,2.427*10**(-3)),(D_m_31,2.427*10**(-3)+7.5*10**(-5)),(L,l)])
+                #eq_with_L_anti=Equation_anti.subs([(D_m_21,7.5*10**(-5)),(D_m_32,2.427*10**(-3)),(D_m_31,2.427*10**(-3)+7.5*10**(-5)),(L,l)])
                 for j,en in enumerate(eneg_range):
-                    Total_prob[i][j]=eq_with_L.subs([(E_nu,en)])-eq_with_L_anti.subs([(E_nu,en)])
+                    Total_prob[i][j]=eq_with_L.subs([(E_nu,en)])#-eq_with_L_anti.subs([(E_nu,en)])
                 del eq_with_L
             
             if a==e and b==mu:
@@ -180,8 +218,8 @@ for events,name in zip(list_of_all,name_help):
     ymin,ymax=plt.gca().get_ylim()
     xmin,xmax=plt.gca().get_xlim()  
 
-    custom_ticks_y=np.linspace(ymin,ymax,9,dtype=int)
-    custom_ticklabels_y=np.linspace(13000,0,9,dtype=int)
+    custom_ticks_y=np.linspace(ymin,ymax,6,dtype=int)
+    custom_ticklabels_y=np.round(np.linspace(-1,0,6,dtype=float),2)
     custom_ticks_x=np.linspace(xmin,xmax,4)
     custom_ticklabels_x=[0.1,1,10,100]
 
@@ -190,7 +228,7 @@ for events,name in zip(list_of_all,name_help):
     plt.gca().set_yticks(custom_ticks_y)
     plt.gca().set_yticklabels(custom_ticklabels_y)
     plt.xlabel("E(GeV)",fontsize=14)
-    plt.ylabel("L(km)",fontsize=14)
+    plt.ylabel(r"cos($\theta$)",fontsize=14)
 
     plt.xlim(right=int(n*0.89))
 
