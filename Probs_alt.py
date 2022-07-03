@@ -120,7 +120,7 @@ for events,hc_event,name in zip(saving_list,[prob_ne_ne,prob_ne_nmu,prob_nu_nmu]
     plt.xlabel("E(GeV)",fontsize=14)
     plt.ylabel(r"cos($\theta$)",fontsize=14)
     plt.title(events[0],fontsize=14)
-
+    
     plt.xlim(right=int(n*0.89))
     plt.savefig("heatmaps/Difference_%s.pdf" %(name))
     plt.show()

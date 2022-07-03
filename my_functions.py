@@ -5,7 +5,7 @@ theta_12= 33.45  #degrees
 theta_23= 42.1   #degrees
 theta_13= 8.62   #degrees
 
-delta_cp= 90    #degrees
+delta_cp= 270    #degrees
 
 Dm_21   = 7.42*10**(-5) #eV^2
 
@@ -198,3 +198,40 @@ def theta(i,j):
         if i==3 or j==3:
             return theta_23
     
+def delta_Kro(a,b):
+    if a==b:
+        return 1
+    else:
+        return 0
+
+
+def Prob_a_to_b_General(a,b,type):
+    index_a,index_b=flavor_to_index(a,b)
+
+    if type == "anti":
+        U=conjugate(PMNS_param_matrix())
+    else:
+        U=PMNS_param_matrix()
+
+    re_sum=0
+    im_sum=0
+    for i in [0,1,2]:
+        for j in [0,1,2]:
+            if i>j:
+                term=U[index_b,i]*conjugate(U[index_a,i])*conjugate(U[index_b,j])*U[index_a,j]
+                re_sum+=re(term)*(sin((D_mass_param(i+1,j+1))*L/(4*E_nu)))**2
+                im_sum+=im(term)*(sin((D_mass_param(i+1,j+1))*L/(2*E_nu)))
+                del term
+    
+    return delta_Kro(a,b)-4*re_sum-2*im_sum
+
+
+def MSW_Dmass(j,i):
+    A=0 #THIS IS 0 FOR VACUUM BUT NOT FOR MATTER. FOR MATTER A=2sqrt(2)G_F N_e E_\nu
+    term=D_mass_param(j,i)*np.sqrt((cos(2*theta(i,j))-(A/D_mass_param(i,j)))**2+(sin(2*theta(i,j)))**2)
+    return term 
+
+def MSW_sin(i,j):
+    A=0 #THIS IS 0 FOR VACUUM BUT NOT FOR MATTER. FOR MATTER A=2sqrt(2)G_F N_e E_\nu
+    term=(cos(2*theta(i,j))-(A/D_mass_param(i,j)))**2+(sin(2*theta(i,j)))**2
+    return (sin(2*theta(i,j))**2)/term
