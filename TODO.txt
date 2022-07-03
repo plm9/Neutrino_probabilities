@@ -1,3 +1,2 @@
-1. replace probabilities with probabilities from 191960.pdf
-    check equations 39-41, maybe also 33 and 36-37
-2. Difference plots for neutrino anti neutrino
+1.in Prob_gen.py anti and normal are all the same, fix that!
+2. Impliment MSW with A=0 for general case
