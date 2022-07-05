@@ -35,6 +35,17 @@ D_m_32=Symbol("D_m_23",real=True)
 L=Symbol("L",real=True,positive=True)
 E_nu=Symbol("E_nu",real=True)
 
+#Constants
+G_F=1.1163787*10**(-5)#GeV^-2
+
+def Y_e(L):
+    if L<15:
+        return 
+    else:
+        return
+
+rho=5.51  #g/cm^3
+N_e=Y_e(L)*rho
 
 def PMNS_param_matrix():
     m=Matrix([
@@ -71,51 +82,6 @@ def flavor_to_index(a,b):
     
     return index_a,index_b
 
-def Prob_a_to_b(a,b):
-    """ 
-    Parameters:
-    a: flavor of the neutrino in the initial state
-    b: flavor of the neutrino in the final state
-
-    Function:
-    Calculates the probability of a neutrino of flavor a to transform into flavor b, as
-    a function of the mixing angles ,the mass differences, the distance traveled and the 
-    energy of the neutrino.
-    """
-    index_a,index_b=flavor_to_index(a,b)
-
-    U=PMNS_param_matrix()
-
-    f=U[index_b,0]*conjugate(U[index_a,0])*U[index_a,1]*conjugate(U[index_b,1])
-    s=U[index_b,0]*conjugate(U[index_a,0])*U[index_a,2]*conjugate(U[index_b,2])
-    t=U[index_b,1]*conjugate(U[index_a,1])*U[index_a,2]*conjugate(U[index_b,2])
-
-    first=re(f)*sin((D_m_21*L)/(4*E_nu))**2
-    second=re(s)*sin((D_m_31*L)/(4*E_nu))**2
-    third=re(t)*sin((D_m_32*L)/(4*E_nu))**2
-
-    if a==b:
-        return 1-4*(first+second+third)
-    else:
-        return -4*(first+second+third)
-
-def Prob_anti_a_to_anti_b(a,b):
-    index_a,index_b=flavor_to_index(a,b)
-
-    U=PMNS_param_matrix()
-
-    f=conjugate(U[index_b,0])*U[index_a,0]*conjugate(U[index_a,1])*U[index_b,1]
-    s=conjugate(U[index_b,0])*U[index_a,0]*conjugate(U[index_a,2])*U[index_b,2]
-    t=conjugate(U[index_b,1])*U[index_a,1]*conjugate(U[index_a,2])*U[index_b,2]
-
-    first=re(f)*sin((D_m_21*L)/(4*E_nu))**2
-    second=re(s)*sin((D_m_31*L)/(4*E_nu))**2
-    third=re(t)*sin((D_m_32*L)/(4*E_nu))**2
-
-    if a==b:
-        return 1-4*(first+second+third)
-    else:
-        return -4*(first+second+third)
 
 def D_mass(i,j,ordering="NO"): #for ordering: NO is normal ordering and IO inverse ordering
     if i==j:
@@ -170,24 +136,6 @@ def D_mass_param(i,j):
 def norm(z):
     return sqrt(re(z)**2+im(z)**2)
 
-def Prob_a_to_b_alt(a,b):
-    index_a,index_b=flavor_to_index(a,b)
-    
-    U=PMNS_param_matrix()
-
-    fst_rhs=0
-    U=PMNS_param_matrix()
-    for i in [0,1,2]:
-        fst_rhs+=(norm(U[index_b,i])**2)* norm(U[index_a,i])**2
-
-    scd_rhs=0
-    for i in [0,1,2]:
-        for j in [0,1,2]:
-            if i>j:
-                scd_rhs+=U[index_b,i]*conjugate(U[index_a,i])*conjugate(U[index_b,j])*U[index_a,j]*cos((D_mass_param(i+1,j+1))*L/(2*E_nu))
-
-    return fst_rhs+(2*re(scd_rhs))
-
 def theta(i,j):
     if i==1 or j==1:
         if i==2 or j==2:
@@ -204,34 +152,23 @@ def delta_Kro(a,b):
     else:
         return 0
 
-
-def Prob_a_to_b_General(a,b,type):
-    index_a,index_b=flavor_to_index(a,b)
-
-    if type == "anti":
-        U=conjugate(PMNS_param_matrix())
-    else:
-        U=PMNS_param_matrix()
-
-    re_sum=0
-    im_sum=0
-    for i in [0,1,2]:
-        for j in [0,1,2]:
-            if i>j:
-                term=U[index_b,i]*conjugate(U[index_a,i])*conjugate(U[index_b,j])*U[index_a,j]
-                re_sum+=re(term)*(sin((D_mass_param(i+1,j+1))*L/(4*E_nu)))**2
-                im_sum+=im(term)*(sin((D_mass_param(i+1,j+1))*L/(2*E_nu)))
-                del term
-    
-    return delta_Kro(a,b)-4*re_sum-2*im_sum
-
-
 def MSW_Dmass(j,i):
     A=0 #THIS IS 0 FOR VACUUM BUT NOT FOR MATTER. FOR MATTER A=2sqrt(2)G_F N_e E_\nu
-    term=D_mass_param(j,i)*np.sqrt((cos(2*theta(i,j))-(A/D_mass_param(i,j)))**2+(sin(2*theta(i,j)))**2)
+    term=D_mass_param(j,i)*sqrt((cos(2*theta(i,j))-(A/D_mass_param(i,j)))**2+(sin(2*theta(i,j)))**2)
     return term 
 
-def MSW_sin(i,j):
+def MSW_angle(i,j):
     A=0 #THIS IS 0 FOR VACUUM BUT NOT FOR MATTER. FOR MATTER A=2sqrt(2)G_F N_e E_\nu
-    term=(cos(2*theta(i,j))-(A/D_mass_param(i,j)))**2+(sin(2*theta(i,j)))**2
-    return (sin(2*theta(i,j))**2)/term
+    term=0.5*asin((sin(2*theta(i,j))**2)/((cos(2*theta(i,j))-(A/D_mass_param(i,j)))**2+sin(2*theta(i,j))**2))
+    return term
+
+
+def theta_MSW(i,j):
+    if i==1 or j==1:
+        if i==2 or j==2:
+            return theta_12
+        elif i==3 or j==3:
+            return MSW_angle(1,3)
+    elif i==2 or j==2:
+        if i==3 or j==3:
+            return theta_23

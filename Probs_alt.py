@@ -4,6 +4,7 @@ from sympy import *
 import seaborn as sns
 #from Prob_calc import PMNS_param_matrix,flavor_to_index
 from my_functions import *
+from Prob_functions import *
 
 #Defining symbols
 s_12=Symbol("s_12",real=True)
