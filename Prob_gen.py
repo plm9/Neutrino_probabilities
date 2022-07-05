@@ -2,6 +2,8 @@ from my_functions import *
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+from Prob_functions import *
+
 e="e"
 mu="mu"
 tau="tau"
@@ -21,8 +23,8 @@ bool=True
 for a in flavors:
     for b in flavors:
         if bool or a==b:
-            expression=expression=Prob_a_to_b_General(a,b,"normal").subs([(s_12,sin(theta(1,2))),(c_12,cos(theta(1,2))),(c_13,cos(theta(1,3))),(c_23,cos(theta(2,3))),(s_13,sin(theta(1,3))),(s_23,sin(theta(2,3))),(d_cp,delta_cp),(D_m_21,D_mass(2,1)),(D_m_32,D_mass(3,2)),(D_m_31,D_mass(3,1))])
-            expression_anti=expression=Prob_a_to_b_General(a,b,"anti").subs([(s_12,sin(theta(1,2))),(c_12,cos(theta(1,2))),(c_13,cos(theta(1,3))),(c_23,cos(theta(2,3))),(s_13,sin(theta(1,3))),(s_23,sin(theta(2,3))),(d_cp,delta_cp),(D_m_21,D_mass(2,1)),(D_m_32,D_mass(3,2)),(D_m_31,D_mass(3,1))])
+            expression=Prob_a_to_b_General(a,b,"normal").subs([(s_12,sin(theta(1,2))),(c_12,cos(theta(1,2))),(c_13,cos(theta(1,3))),(c_23,cos(theta(2,3))),(s_13,sin(theta(1,3))),(s_23,sin(theta(2,3))),(d_cp,delta_cp),(D_m_21,D_mass(2,1)),(D_m_32,D_mass(3,2)),(D_m_31,D_mass(3,1))])
+            expression_anti=Prob_a_to_b_General(a,b,"anti").subs([(s_12,sin(theta(1,2))),(c_12,cos(theta(1,2))),(c_13,cos(theta(1,3))),(c_23,cos(theta(2,3))),(s_13,sin(theta(1,3))),(s_23,sin(theta(2,3))),(d_cp,delta_cp),(D_m_21,D_mass(2,1)),(D_m_32,D_mass(3,2)),(D_m_31,D_mass(3,1))])
             expression_diff=(Prob_a_to_b_General(a,b,"normal")-Prob_a_to_b_General(a,b,"anti")).subs([(s_12,sin(theta(1,2))),(c_12,cos(theta(1,2))),(c_13,cos(theta(1,3))),(c_23,cos(theta(2,3))),(s_13,sin(theta(1,3))),(s_23,sin(theta(2,3))),(d_cp,delta_cp),(D_m_21,D_mass(2,1)),(D_m_32,D_mass(3,2)),(D_m_31,D_mass(3,1))])
             Total_prob=np.zeros([n,n])
             Total_prob_anti=np.zeros([n,n])
@@ -88,7 +90,7 @@ for events,antievents,diff_events,name in zip(saving_list,saving_list_anti,savin
 
     #plt.title(events[0],fontsize=14) 
     #plt.savefig('heatmaps/general/Gen_prob_%s_to.pdf' % (name))
-    #plt.show()
+    plt.show()
 
     #Here we plot for the anti neutinos
     plt.figure(figsize=(8,6))
@@ -115,7 +117,7 @@ for events,antievents,diff_events,name in zip(saving_list,saving_list_anti,savin
 
     #plt.title(events[0],fontsize=14) 
     #plt.savefig('heatmaps/general/Me_prob_anti_%s_to.pdf' % (name))
-    #plt.show()
+    plt.show()
 
 
     plt.figure(figsize=(8,6))
@@ -141,8 +143,8 @@ for events,antievents,diff_events,name in zip(saving_list,saving_list_anti,savin
     plt.xlim(right=int(n*0.89))
 
     plt.title(diff_events[0],fontsize=14) 
-    plt.savefig('heatmaps/general/Gen_diff_3pi2_%s_to.pdf' % (name))
-    #plt.show()
+    #plt.savefig('heatmaps/general/Gen_diff_3pi2_%s_to.pdf' % (name))
+    plt.show()
 
 
 print("Plots done!!!")
