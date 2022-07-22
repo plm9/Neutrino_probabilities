@@ -3,7 +3,7 @@ import numpy as np
 from sympy import *
 from Prob_gen import Total_prob
 
-from my_functions import  *
+from package_func.my_functions import  *
 
 def Calculator(flavors,Prob_func_expr,nb):
     dist=np.linspace(0,13000,nb)

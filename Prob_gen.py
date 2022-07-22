@@ -1,4 +1,5 @@
-from my_functions import *
+from package_func.my_functions import *
+from package_func.Prob_funcs import Long
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -10,8 +11,9 @@ tau="tau"
 
 flavors=[e,mu]
 
-n=200
-dist=np.linspace(0,13000,n)
+n=100
+#dist=np.linspace(0,13000,n)
+dist=np.linspace(1,-1,n)
 eneg_range=np.logspace(-1,2,n)
 
 saving_list=[]
@@ -30,7 +32,8 @@ for a in flavors:
             Total_prob_anti=np.zeros([n,n])
             Total_prob_diff=np.zeros([n,n])
             print("Calculation for "+a+" to "+b+" started!")
-            for i,l in enumerate(dist):
+            for i,ln in enumerate(dist):
+                l=Long(ln)
                 eq_with_L=expression.subs([(L,l)])
                 eq_with_L_a=expression_anti.subs([(L,l)])
                 eq_with_L_diff=expression_diff.subs([(L,l)])
@@ -75,7 +78,7 @@ for events,antievents,diff_events,name in zip(saving_list,saving_list_anti,savin
     xmin,xmax=plt.gca().get_xlim()  
 
     custom_ticks_y=np.linspace(ymin,ymax,6,dtype=int)
-    custom_ticklabels_y=np.round(np.linspace(-1,0,6,dtype=float),2)
+    custom_ticklabels_y=np.round(np.linspace(-1,1,6,dtype=float),2)
     custom_ticks_x=np.linspace(xmin,xmax,4)
     custom_ticklabels_x=[0.1,1,10,100]
 
@@ -102,7 +105,7 @@ for events,antievents,diff_events,name in zip(saving_list,saving_list_anti,savin
     xmin,xmax=plt.gca().get_xlim()  
 
     custom_ticks_y=np.linspace(ymin,ymax,6,dtype=int)
-    custom_ticklabels_y=np.round(np.linspace(-1,0,6,dtype=float),2)
+    custom_ticklabels_y=np.round(np.linspace(-1,1,6,dtype=float),2)
     custom_ticks_x=np.linspace(xmin,xmax,4)
     custom_ticklabels_x=[0.1,1,10,100]
 
@@ -129,7 +132,7 @@ for events,antievents,diff_events,name in zip(saving_list,saving_list_anti,savin
     xmin,xmax=plt.gca().get_xlim()  
 
     custom_ticks_y=np.linspace(ymin,ymax,6,dtype=int)
-    custom_ticklabels_y=np.round(np.linspace(-1,0,6,dtype=float),2)
+    custom_ticklabels_y=np.round(np.linspace(-1,1,6,dtype=float),2)
     custom_ticks_x=np.linspace(xmin,xmax,4)
     custom_ticklabels_x=[0.1,1,10,100]
 

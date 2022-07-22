@@ -1,4 +1,4 @@
-from my_functions import *
+from package_func.my_functions import *
 import matplotlib.pyplot as plt
 import seaborn as sns
 
