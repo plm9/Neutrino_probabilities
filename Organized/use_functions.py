@@ -54,7 +54,7 @@ def CP_difference_with_P_cp(cz,En):
 
 
 def main():
-    N=200
+    N=300
     Cz=np.linspace(-1,0,N+1)
     En=np.logspace(-1,2,N+1)
 
@@ -107,37 +107,42 @@ def main():
             for j in range(2):
                 data = data_list[indexer]
                 im = ax[j, i].pcolormesh(En,Cz,data,cmap="hot",vmin=0,vmax=1)
-                plt.colorbar(im, ax=ax[j, i])
+                #plt.colorbar(im, ax=ax[j, i])
                 ax[j,i].set_xscale("log")
                 if indexer%2==0:
                     ax[j,i].set_title(titles[title_index])
                     title_index+=1  
                 indexer+=1
-        
+        #plt.colorbar(im, ax=ax[j, i])
+        fig.subplots_adjust(right=0.85)
+        cbar_ax = fig.add_axes([0.87, 0.15, 0.02, 0.7])
+        fig.colorbar(im, cax=cbar_ax) 
         ax[0,0].set_ylabel(neutrinos[nu_index],fontsize=16)
         ax[1,0].set_ylabel(anti_neutrinos[nu_index],fontsize=16)
         fig.text(0.07,0.5,r"$\cos(\theta)$",va='center',rotation="vertical",fontsize=16)
-        fig.text(0.93,0.5,r"$P(\nu)$",va='center',rotation="vertical",fontsize=16)
+        fig.text(0.93,0.5,r"$P(\nu)$",fontsize=16)#va='center',rotation="vertical",
         fig.text(0.5, 0.04, r"$E_\nu$(GeV)", ha='center',fontsize=16)
 
-        #plt.savefig("Oscillation_probs_MSW_{}.pdf".format(a))
+        plt.savefig("Oscillation_probs_MSW_{}.pdf".format(a))
         #plt.show()
 
         ## CP violation plots
-        fig1, ax1 = plt.subplots(1, 3,figsize=(10, 5),sharex="col",sharey="row")
+        fig1, ax1 = plt.subplots(1, 3,figsize=(10.5, 4.5),sharex="col",sharey="row")
         indexer_CP=0
         title_index=0
         #for i in range(1):
         for j in range(3):
             data = data_list[indexer_CP]-data_list[indexer_CP+1]
-            im = ax1[j].pcolormesh(En,Cz,data,cmap="hot",vmin=0,vmax=0.5)
-            plt.colorbar(im, ax=ax1[j])
+            im = ax1[j].pcolormesh(En,Cz,data,cmap="bwr",vmin=-0.5,vmax=0.5)
+            #plt.colorbar(im, ax=ax1[j])
             ax1[j].set_xscale("log")
             if indexer_CP%2==0:
                 ax1[j].set_title(titles[title_index])
                 title_index+=1  
             indexer_CP+=2
-        
+        fig1.subplots_adjust(right=0.85)
+        cbar_ax = fig1.add_axes([0.87, 0.15, 0.02, 0.7])
+        fig1.colorbar(im, cax=cbar_ax) 
         ax1[0].set_ylabel(neutrinos[nu_index]+"-"+anti_neutrinos[nu_index],fontsize=14)
         fig1.text(0.01,0.5,r"$\cos(\theta)$",va='center',rotation="vertical",fontsize=14)
         fig1.text(0.93,0.5,r"$P(\nu)-P(\bar{\nu})$",va='center',rotation="vertical",fontsize=14)
