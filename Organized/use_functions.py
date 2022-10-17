@@ -54,7 +54,7 @@ def CP_difference_with_P_cp(cz,En):
 
 
 def main():
-    N=300
+    N=200
     Cz=np.linspace(-1,0,N+1)
     En=np.logspace(-1,2,N+1)
 
@@ -83,8 +83,8 @@ def main():
                     Cs=0.5*(Cz[i]+Cz[i+1])
                     Eng=0.5*(En[j]+En[j+1])
                     
-                    MSW_prob[i,j]=pf.Prob_a_to_b_Gen_MSW(a,b,Cs,Eng)    
-                    MSW_prob_anti[i,j]=pf.Prob_a_to_b_Gen_MSW(a,b,Cs,Eng,type="anti")    
+                    MSW_prob[i,j]=pf.Prob_a_to_b_Gen_MSW(a,b,Cs,Eng,ordering="NO")    
+                    MSW_prob_anti[i,j]=pf.Prob_a_to_b_Gen_MSW(a,b,Cs,Eng,type="anti",ordering="NO")
 
                     #Total_prob[i,j]=pf.Prob_calc_General(a,b,Cs,Eng)
                     #Total_prob_anti[i,j]=pf.Prob_calc_General(a,b,Cs,Eng,type="anti")
@@ -123,7 +123,7 @@ def main():
         fig.text(0.93,0.5,r"$P(\nu)$",fontsize=16)#va='center',rotation="vertical",
         fig.text(0.5, 0.04, r"$E_\nu$(GeV)", ha='center',fontsize=16)
 
-        plt.savefig("Oscillation_probs_MSW_{}.pdf".format(a))
+        plt.savefig("Oscillation_probs_{}.pdf".format(a)) #I WILL CHANGE A AND THEN I LL ADD MSW ON THE NAME
         #plt.show()
 
         ## CP violation plots
@@ -148,7 +148,7 @@ def main():
         fig1.text(0.93,0.5,r"$P(\nu)-P(\bar{\nu})$",va='center',rotation="vertical",fontsize=14)
         fig1.text(0.5, 0.02, r"$E_\nu$(GeV)", ha='center',fontsize=14)
 
-        plt.savefig("neutrinos-anti_{}.pdf".format(a))
+        plt.savefig("neutrinos-anti_{}.pdf".format(a))#I WILL CHANGE A AND THEN I LL ADD MSW ON THE NAME
         #plt.show()
         nu_index+=1
         del data_list,titles

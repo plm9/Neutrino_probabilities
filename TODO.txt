@@ -1,2 +1,9 @@
-1.in Prob_gen.py anti and normal are all the same, fix that!
-2. Impliment MSW with A=0 for general case
+1.Make plots for:
+	a. all flavors propagation probability 
+	b. difference plots for neutrino-anti
+	c. Maybe try different delta_cp
+	d. Maybe try no and io
+2.Prepare presentation for Tuesday meeting
+	a. Small Theoretical intro
+	b. Show the above plots
+	c. Add outline for next step
